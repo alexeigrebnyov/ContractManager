@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Repository
 public class FileSystemRepository {
-    String RESOURCES_DIR = "C:/Users/alexei/IdeaProjects/ContractManager/resources/";
+    String RESOURCES_DIR = "";
 //            FileSystemRepository.class.getResource("")
 //            .getPath().substring(3);
 
