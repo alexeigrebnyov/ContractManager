@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin panel</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css" integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK" crossorigin="anonymous">
+    <!-- JavaScript Bundle with Popper.js -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.bundle.min.js" integrity="sha384-BOsAfwzjNJHrJ8cZidOg56tcQWfp6y72vEJ8xQ9w6Quywb24iOsW913URv1IS4GD" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js" integrity="sha384-VHvPCCyXqtD5DqJeNxl2dtTyhF78xXNXdkwX1CZeRusQfRKp+tA7hAShOK/B/fQ2" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+</head>
+<!-- CSS only -->
+
+<body>
+<!--<div class="row bg-secondary text-white">-->
+<!--    <div class="col-md-11"> <span th:text="${thisUser.email} +' with roles: ' +-->
+<!--                                ${thisUser.roles}"></span></div>-->
+<!--    <div class="col-md-1"><a class="text-white" th:href="@{/logout}"> Logout </a></div>-->
+<!--</div>-->
+<br>
+
+<div class="row " style="height: 100vh">
+    <nav class="nav flex-column nav-pills col-md-2" >
+        <a class="nav-link active" href="#">Договора</a>
+        <a class="nav-link" th:href="@{/crd/hello}">Админ</a>
+<!--        <a class="nav-link" href="users">User</a>-->
+    </nav>
+
+    <div class="col-md-10" style="background-color: #F8F8FF">
+        <div class="container-fluid">
+            <h1>Договора</h1>
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a th:attr="class=${active? 'nav-link':'nav-link  active'}"  id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Users table</a>
+                </li>
+                <li class="nav-item">
+                    <a class= "nav-link"  id="profile-tab" data-toggle="tab" th:attr="href=${isAdmin ? '#profile' : '#' }" role="tab" aria-controls="profile" aria-selected="true" >New User</a>
+                </li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div th:attr="class=${active? 'tab-pane':'tab-pane active'}" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <div>
+                        <h4>All users</h4>
+                        <div class="bg-white">
+                            <br>
+                            <form action="/crd/getFilter" id="filter" name="filter" method="post" th:object="${newFilter}">
+                                <div class="raw" col-md-8>
+
+                                    <input list="nomera" name="nomer" id="nomer" th:id="nomer" size="6">
+                                    <datalist id="nomera">
+                                        <option value="" selected ></option>
+                                        <option th:each="contract: ${nomerFilter}" th:value="${contract}" th:text="${contract}"></option>
+                                    </datalist>
+
+                                    <input list="rekvisity" name="rekvisity" id="rekvisity1"  size="6">
+                                    <datalist id="rekvisity">
+                                        <option value="" selected ></option>
+                                        <option th:each="contract: ${rekvisity}" th:value="${contract}" th:text="${contract}"></option>
+                                    </datalist>
+                                    <!--                                    <select name="nomer" id="nomer" th:id="nomer">-->
+                                    <!--                                        <option value="" selected ></option>-->
+                                    <!--                                        <option th:each="contract: ${nomerFilter}" th:value="${contract}" th:text="${contract}"></option>-->
+                                    <!--                                    </select>-->
+                                    <input list="postavshiklist" name="postavshik" id="post" size="6">
+                                    <datalist id="postavshiklist" >
+                                        <option value="" selected ></option>
+                                        <option value="поставщик" selected ></option>
+                                        <option value="покупатель" selected ></option>
+                                    </datalist>
+                                    <input list="contactName" name="contactName1" id="contactName1" size="6">
+                                    <datalist  id="contactName" >
+                                        <option value="" selected ></option>
+                                        <option th:each="contract:${nameFilter}" th:value="${contract}" th:text="${contract} "  ></option>
+                                    </datalist>
+                                    <input  name="dateFrom" id="dateFrom" size="6">
+                                    <input  name="dateTo" id="dateTo" size="6">
+                                    <input list="contragentAlias" name="contragentAlias" id="contragentAlias1" size="6">
+                                <datalist    id="contragentAlias"   >
+                                    <option value="" selected></option>
+                                    <option th:each="c: ${contragents}" th:value="${c}" th:text="${c}"  ></option>
+                                </datalist>
+
+                                    <input list="store" name="store" id="store1" size="6">
+                                    <datalist    id="store"   >
+                                        <option value="" selected ></option>
+                                        <option th:each="s: ${stores}" th:value="${s}" th:text="${s} "  ></option>
+                                    </datalist>
+                                    <input list="predmet" name="predmet" size="6">
+                                    <datalist id="predmet">
+                                        <option value="" selected ></option>
+                                        <option th:each="contract: ${predmetFilter}" th:value="${contract}" th:text="${contract}"></option>
+                                    </datalist>
+                                    <input list="origin" name="original" size="6">
+                                    <datalist id="origin">
+                                        <option value="" selected ></option>
+                                        <option value="да"></option>
+                                        <option value="нет"></option>
+                                    </datalist>
+
+                                    <input list="origin" name="righted"  size="6">
+
+                                 </div>
+                                <br>
+                                <div class="d-flex flex-row-reverse">
+                                    <div class="p-2">
+                                        <button type="submit">Применить фильтр</button>
+
+                            </form>
+                        </div>
+                        <div class="p-2">
+                            <form action="/crd/clear" id="clear" name="clear" method="post">
+                                <button type="submit">Очистить фильтр</button>
+                            </form>
+                        </div>
+                    </div>
+                                <br>
+                                <div class="raw" col-md-8>
+                                    <input list="nomera" name="nomerOr" id="nomerOr" size="6">
+
+                                    <input list="rekvisity" name="rekvisityOr" id="rekvisity2"  size="6">
+                                    <input list="postavshiklist" name="postavshikOr" id="postOr" size="6">
+
+                                    <input list="contactName" name="contactNameOr" id="contactNameOr" size="6">
+                                    <input  name="dateFromOr" id="dateFromOr" size="6">
+                                    <input  name="dateToOr" id="dateToOr" size="6">
+
+                                    <input list="contragentAlias" name="contragentAliasOr" id="contragentAliasOr" size="6">
+
+                                    <input list="store" name="storeOr" id="storeOr" size="6" >
+
+                                    <input list="predmet" name="predmetOr" size="6">
+                                    <input list="origin" name="originalOr" size="6">
+                                    <input list="origin" name="rightedOr" size="6">
+                                </div>
+
+
+                            <table  class="table table-striped">
+                                <tr>
+                                    <th>id</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Age</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+
+
+                                <th:block th:each="user : ${contracts}">
+                                    <tr >
+                                        <td th:utext="${user.nomer}"></td>
+                                        <td th:utext="${user.rekvisity.alias}"></td>
+                                        <td th:utext="${user.getPostavshik()}"></td>
+                                        <td th:utext="${user.name}"></td>
+                                        <td th:utext="${user.date}"></td>
+                                        <td >
+<!--                                            <form th:action="@{/image/imageId}" name="screen" id="screen" method="get" target="_blank">-->
+<!--                                                <input type="hidden" th:value="${user.getImage().getId()}" name="id" id="id">-->
+<!--                                                <input type="submit">-->
+<!--                                            </form>-->
+<!--                                            <br>-->
+                                            <form th:action="@{/viewPdf}" name="pdfscreen" id="pdfscreen" method="get" target="_blank">
+                                                <input type="hidden" th:value="${user.getImage().getId()}" name="pdfid" id="pdfid">
+                                                <input value="просмотреть" type="submit">
+                                            </form>
+<!--                                            <br>-->
+<!--                                            <form th:action="@{/downloadPdf}" name="pdfdownload" id="pdfdownload" method="get">-->
+<!--                                                <input type="hidden" th:value="${user.getImage().getId()}" name="downloadid" id="downloadid">-->
+<!--                                                <input value="загрузить" type="submit">-->
+<!--                                            </form>-->
+                                        </td>
+                                        <td>
+                                            <button type="submit" data-target="#ContragentModalBox" class="btn btn-primary" data-toggle="modal" th:attrappend="data-target=${user.id}" th:utext="${user.contragent.alias}" ></button>
+                                            <div id="ContragentModalBox" class="modal fade" tabindex="-1" role="dialog" style="font-weight: bold" th:attrappend="id=${user.id}">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <!-- Заголовок модального окна -->
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title">Контрагент</h4>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >×</button>
+                                                        </div>
+                                                        <!-- Основное содержимое модального окна -->
+                                                        <div class="modal-body text-center">
+
+                                                            <form th:action="@{/crd/updateContragent}" method="post"  th:object="${user}">
+                                                                <div class="form-row justify-content-center mx-auto col-6">
+
+
+                                                                    <div class="form-group text-dark">
+                                                                        <label th:for="id">Id</label>
+                                                                        <div>
+                                                                            <input class="form-control" type="text" name="id" th:id="id" th:value="${user.getContragent().getId()}">
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <label th:for="name">First Name</label>
+                                                                        <div>
+                                                                            <input class="form-control" type="text" name="name" th:id="name" th:value="${user.getContragent().getName()}">
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <label th:for="alias">Last Name</label>
+                                                                        <div>
+                                                                            <input class="form-control" type="text" name="alias" th:id="alias" th:value="${user.getContragent().getAlias()}">
+
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label th:for="inn">Last Name</label>
+                                                                        <div>
+                                                                            <input class="form-control" type="text" name="inn" th:id="inn" th:value="${user.getContragent().getInn()}">
+
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <!--                                                                    <div class="form-group">-->
+
+                                                                    <!--                                                                        <label th:for="email">Email</label>-->
+                                                                    <!--                                                                        <div>-->
+                                                                    <!--                                                                            <input class="form-control" type="text" name="email" th:id="email" th:value="${user.email}">-->
+                                                                    <!--                                                                        </div>-->
+                                                                    <!--                                                                    </div>-->
+                                                                    <!--                                                                    <div class="form-group">-->
+
+                                                                    <!--                                                                        <label th:for="password">Password</label>-->
+                                                                    <!--                                                                        <div>-->
+                                                                    <!--                                                                            <input class="form-control" type="text" name="password" th:id="password" th:value="${user.password}">-->
+                                                                    <!--                                                                        </div>-->
+                                                                    <!--                                                                    </div>-->
+                                                                    <!--                                                                    <div class="form-group">-->
+                                                                    <!--                                                                        <label th:for="roles">Roles </label>-->
+                                                                    <!--                                                                        <div>-->
+                                                                    <!--                                                                            <select class="form-control" multiple name="roles" size="3" th:id="roles"-->
+                                                                    <!--                                                                                    readonly required th:value="${user.roles}">-->
+                                                                    <!--                                                                                <option disabled>Select roles</option>-->
+                                                                    <!--                                                                                <option th:each="role : ${roles}" th:value="${role}" th:text="${role.role}"></option>-->
+                                                                    <!--                                                                            </select>-->
+                                                                    <!--                                                                        </div>-->
+                                                                    <!--                                                                    </div>-->
+                                                                </div>
+
+                                                                <!-- Футер модального окна -->
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                    <button type="submit" class="btn btn-primary">Edit</button>
+                                                                </div>
+                                                            </form>
+
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td th:utext="${user.store.name}"></td>
+                                        <td th:utext="${user.getPredmet()}"></td>
+
+<!--                                        <td th:utext="${user.getOriginal()}"></td>-->
+                                        <td > <input type="checkbox" th:checked="${user.getOriginal().equals('да')}"></td>
+                                        <td > <input type="checkbox" th:checked="${user.getRighted().equals('да')}"></td>
+<!--                                        <td>-->
+<!--                                            <th:block th:each="role : ${user.roles}">-->
+<!--                                                <a th:text="${role.role} + ';'"></a>-->
+<!--                                            </th:block>-->
+<!--                                        </td>-->
+                                        <td>
+
+                                            <button type="submit" data-target="#myModalBox" class="btn btn-primary" data-toggle="modal" th:attrappend="data-target=${user.id}" >Редактировать</button>
+                                            <div id="myModalBox" class="modal fade" tabindex="-1" role="dialog" style="font-weight: bold" th:attrappend="id=${user.id}">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <!-- Заголовок модального окна -->
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title">Редактирование договора</h4>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >×</button>
+                                                        </div>
+                                                        <!-- Основное содержимое модального окна -->
+                                                        <div class="modal-body text-center">
+
+                                                            <form th:action="@{/crd/updateContract}" method="post" th:object="${user}">
+                                                                <div class="form-row justify-content-center mx-auto col-6">
+
+                                                                    <div class="form-group text-dark">
+                                                                        <label th:for="id">Id</label>
+                                                                        <div>
+                                                                            <input class="form-control" type="text" name="id" th:id="id" th:value="${user.getId()}">
+                                                                        </div>
+                                                                    </div>
+
+
+                                                                    <div class="form-group text-dark">
+                                                                        <label th:for="nomer">Номер</label>
+                                                                        <div>
+                                                                            <input class="form-control" type="text" name="nomer" th:id="nomer" th:value="${user.nomer}">
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="form-group text-dark">
+                                                                        <label th:for="rekvisityEdit">Номер</label>
+                                                                        <div>
+                                                                            <input list="rekvisity" class="form-control" type="text" name="yrlitsoEditname" th:id="rekvisityEdit" th:value="${user.rekvisity.alias}">
+                                                                        </div>
+                                                                    </div>
+
+
+
+                                                                    <div class="form-group">
+                                                                        <label th:for="postavshik">Роль</label>
+                                                                        <div>
+                                                                            <input list="postavshik" class="form-control" type="text" name="postavshik" th:id="postavshik" th:value="${user.postavshik}">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label th:for="name">Наименование</label>
+                                                                        <div>
+                                                                            <input class="form-control" type="text" name="name" th:id="name" th:value="${user.name}">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label th:for="date">Дата</label>
+                                                                        <div>
+                                                                            <input class="form-control" type="text" name="date" th:id="date" th:value="${user.date}">
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <label th:for="date">Скан договора</label>
+                                                                        <datalist id="imageEdit">
+                                                                            <option th:each="iname:${images}" th:value="${iname.getName()}" th:text="${iname.getName()}"></option>
+                                                                        </datalist>
+                                                                        <div>
+                                                                            <input list="imageEdit" class="form-control" type="text"  th:value="${user.image.name}" name="imageEditname" >
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <label th:for="alias">Контрагент</label>
+                                                                        <div>
+                                                                            <input list="contragentAlias" class="form-control" type="text" name="alias" th:id="alias" th:value="${user.getContragent().alias}">
+
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label th:for="store">Склад</label>
+                                                                        <div>
+                                                                            <input list="store" class="form-control" type="text"  name="storeEdit" th:value="${user.store.name}">
+
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <label th:for="original">Оригинал</label>
+                                                                        <div>
+                                                                            <input list="origin" class="form-control" type="text" name="original" th:id="original" th:value="${user.original}">
+
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <label th:for="righted">Подписан</label>
+                                                                        <div>
+                                                                            <input list="origin" class="form-control" type="text" name="righted" th:id="righted" th:value="${user.righted}">
+
+                                                                        </div>
+                                                                    </div>
+
+<!--                                                                    <div class="form-group">-->
+
+<!--                                                                        <label th:for="email">Email</label>-->
+<!--                                                                        <div>-->
+<!--                                                                            <input class="form-control" type="text" name="email" th:id="email" th:value="${user.email}">-->
+<!--                                                                        </div>-->
+<!--                                                                    </div>-->
+<!--                                                                    <div class="form-group">-->
+
+<!--                                                                        <label th:for="password">Password</label>-->
+<!--                                                                        <div>-->
+<!--                                                                            <input class="form-control" type="text" name="password" th:id="password" th:value="${user.password}">-->
+<!--                                                                        </div>-->
+<!--                                                                    </div>-->
+<!--                                                                    <div class="form-group">-->
+<!--                                                                        <label th:for="roles">Roles </label>-->
+<!--                                                                        <div>-->
+<!--                                                                            <select class="form-control" multiple name="roles" size="3" th:id="roles"-->
+<!--                                                                                    readonly required th:value="${user.roles}">-->
+<!--                                                                                <option disabled>Select roles</option>-->
+<!--                                                                                <option th:each="role : ${roles}" th:value="${role}" th:text="${role.role}"></option>-->
+<!--                                                                            </select>-->
+<!--                                                                        </div>-->
+<!--                                                                    </div>-->
+                                                                </div>
+
+                                                                <!-- Футер модального окна -->
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                                                                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                                                                </div>
+                                                            </form>
+
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td> <form th:action="@{/crd/deleteContract/{id}(id=${user.getId()})}" method="post">
+                                            <button type="submit" class="btn btn-danger">удалить</button>
+                                        </form>
+<!--                                            <button type="submit" data-target="#delete" class="btn btn-danger" data-toggle="modal" th:attrappend="data-target=${user.id}">Delete</button>-->
+
+
+
+
+                                        </td>
+                                    </tr>
+                                </th:block>
+                            </table>
+                            <br>
+                        </div>
+                    </div>
+                </div>
+                <div th:attr="class=${active? 'tab-pane active':'tab-pane'}" id="profile" role="tabpanel"  aria-labelledby="profile-tab">
+                    <div class="card">
+                        <div class="card-header">
+                            Add new Contract
+                        </div>
+                        <div class="card-body text-start" style="font-weight: bold">
+                            <div class="d-flex flex-row">
+
+
+                                <form th:action="@{/crd/saveContract}" method="post" th:object="${newContract}" >
+
+
+                                    <div class="p-2">
+
+                                        <label th:for="nomer">Номер</label>
+                                        <input  list="nomera" type="text" name="nomer" >
+
+                                        <label th:for="postavshik">Роль</label>
+
+                                        <input list="postavshiklist" type="text" name="postavshik" id="postavshik" >
+
+                                        <label th:for="name">Наименование</label>
+
+                                            <input list="contactName"  type="text" name="name" >
+
+
+
+                                        <button class="btn btn-success" type="submit">Добавить договор</button>
+                                    </div>
+
+                                    <div class="p-2">
+
+
+                                    </div>
+
+
+                                    <div class="p-2">
+                                        <label th:for="rekvisity">Юрлицо</label>
+                                        <input list="rekvisity"  type="text" name="rekviz" th:id="rekvisity" required="required">
+
+                                        <label th:for="contragentId">Контрагент</label>
+                                            <input list="contragentAlias"  name="contragentId" required="required">
+
+                                        <label th:for="storen">Склад</label>
+                                        <input list="store"  name="storen" id="storen" required="required">
+
+                                    </div>
+                                    <div class="p-2">
+
+                                        <label th:for="predmetfield">Предмет</label>
+                                        <input list="predmet"  name="predmet" id="predmetfield" >
+
+                                        <label th:for="date">Дата</label>
+                                        <input  type="text" name="date" th:id="date">
+
+                                        <label th:for="originalfield"  class="control-label">Оригинал</label>
+                                        <input list="origin"  name="original" id="originalfield" >
+
+
+                                        <label th:for="predmetfield">Подписан</label>
+                                        <input list="origin"  name="righted" id="righted" >
+                                    </div>
+                                    </div>
+                                    <div class="d-flex flex-row">
+
+                                    <div class="p-2">
+
+                                        <label th:for="image1">Скан</label>
+<!--                                        <div>-->
+
+                                            <select  type="text" name="image1" th:id="image1" required="required">
+                                                <option value="" selected></option>
+                                                <option th:each="iname:${images}" th:value="${iname.getName()}" th:text="${iname.getName()}"></option>
+                                            </select>
+
+
+
+<!--                                        </div>-->
+
+                                    </div>
+                                </form>
+<!--                                        <div class="d-flex flex-row">-->
+<!--                                        <form th:action="@{/image}" name="imageform" id="imageform" method="post" enctype="multipart/form-data">-->
+<!--                                            <div class="p-2">-->
+<!--                                            <input type="file" name="image" id="image">-->
+<!--                                            <input type="submit">-->
+<!--                                            </div>-->
+<!--                                        </form>-->
+
+<!--                                            <div class="p-2" >-->
+<!--                                        <form th:action="@{/pdfmerge}" name="multyimageform" id="multyimageform" method="get" >-->
+<!--                                            &lt;!&ndash;                                    <input type="file" name="files[]" id="files[]" multiple >&ndash;&gt;-->
+<!--                                            <input type="submit" value="собрать">-->
+<!--                                        </form>-->
+<!--                                            </div>-->
+<!--                                    </div>-->
+                            </div>
+<!--                                    <div class="form-group ">-->
+<!--                                        <label th:for="email">Email</label>-->
+<!--                                        <div>-->
+<!--                                            <input class="form-control" type="text" name="email" th:id="email">-->
+<!--                                        </div>-->
+
+<!--                                    </div>-->
+<!--                                    <div class="form-group ">-->
+<!--                                        <label th:for="password">Password</label>-->
+<!--                                        <div>-->
+<!--                                            <input class="form-control" type="password" name="password" th:id="password">-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+
+<!--                                    <div class="form-group ">-->
+<!--                                        <label th:for="roles">Roles</label>-->
+<!--                                        <div>-->
+<!--                                            <select class="form-control" multiple name="roles" size="3" th:id="roles" required>-->
+<!--                                                <option disabled>Select roles</option>-->
+<!--                                                <option th:each="role : ${roles}" th:value="${role}" th:text="${role.role}"></option>-->
+<!--                                            </select>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+
+
+
+
+
+
+                            </div>
+                                <br>
+
+                        <div class="d-flex flex-row">
+                            <div class="p-2" >
+                                <button type="submit" data-target="#delete" class="btn btn-danger" data-toggle="modal" disabled >Добавить юрлицо</button>
+                                <div id="delete"  class="modal fade" tabindex="-1" role="dialog"
+                                     style="font-weight: bold"
+                                >
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <!-- Заголовок модального окна -->
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Delete user</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >×</button>
+                                            </div>
+                                            <!-- Основное содержимое модального окна -->
+                                            <div class="modal-body text-center">
+
+                                                <form th:action="@{/delete}" method="post" th:object="${user}">
+                                                    <!--                                        <input type="submit" name="id" th:value="${user.id}">-->
+                                                    <div class="form-row justify-content-center mx-auto col-6">
+
+
+                                                        <div class="form-group">
+
+                                                            <label th:for="id">Id</label>
+                                                            <div>
+                                                                <input class="form-control" type="text" name="id" th:id="id" >
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+
+                                                            <label th:for="name">First Name</label>
+                                                            <div>
+                                                                <input class="form-control" type="text" name="name" th:id="name" >
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+
+                                                            <label th:for="date">Last Name</label>
+                                                            <div>
+                                                                <input class="form-control" type="text" name="date" th:id="date" >
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label  th:for="alias">Age</label>
+                                                            <div>
+                                                                <input class="form-control" type="text" name="alias" th:id="alias" >
+                                                            </div>
+                                                        </div>
+
+                                                        <!--                                                                    <div class="form-group">-->
+                                                        <!--                                                                        <label th:for="email">Email</label>-->
+                                                        <!--                                                                        <div>-->
+                                                        <!--                                                                            <input class="form-control" type="text" name="email" th:id="email" th:value="${user.email}">-->
+                                                        <!--                                                                        </div>-->
+                                                        <!--                                                                    </div>-->
+                                                        <!--                                                                    <div class="form-group">-->
+
+                                                        <!--                                                                        <label th:for="roles">Roles </label>-->
+                                                        <!--                                                                        <div>-->
+                                                        <!--                                                                            <select multiple name="roles" size="3" readonly class="form-control" >-->
+                                                        <!--                                                                                <option  th:each="role : ${roles}" th:value="${role}" th:text="${role.role}"></option>-->
+                                                        <!--                                                                            </select>-->
+                                                        <!--                                                                        </div>-->
+                                                        <!--                                                                    </div>-->
+                                                    </div>
+
+
+
+                                                    <!-- Футер модального окна -->
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                    </div>
+                                                </form>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" data-target="#addContragent" class="btn btn-danger" data-toggle="modal" >Добавить контрагента</button>
+                                <div id="addContragent"  class="modal fade" tabindex="-1" role="dialog"
+                                     style="font-weight: bold"
+                                >
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <!-- Заголовок модального окна -->
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Добавление контрагента</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >×</button>
+                                            </div>
+                                            <!-- Основное содержимое модального окна -->
+                                            <div class="modal-body text-center">
+
+                                                <form th:action="@{/crd/addContragent}" method="post" th:object="${newContraent}">
+                                                    <!--                                        <input type="submit" name="id" th:value="${user.id}">-->
+                                                    <div class="form-row justify-content-center mx-auto col-6">
+
+
+<!--                                                        <div class="form-group">-->
+
+<!--                                                            <label th:for="id">Id</label>-->
+<!--                                                            <div>-->
+<!--                                                                <input class="form-control" type="text" name="id" th:id="id" >-->
+<!--                                                            </div>-->
+<!--                                                        </div>-->
+
+                                                        <div class="form-group">
+
+                                                            <label th:for="name">Полное наименование</label>
+                                                            <div>
+                                                                <input class="form-control" type="text" name="name" th:id="name" >
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div class="form-group">
+                                                            <label  th:for="alias">Краткое наименование</label>
+                                                            <div>
+                                                                <input class="form-control" type="text" name="alias" th:id="alias" >
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+
+                                                            <label th:for="inn">ИНН</label>
+                                                            <div>
+                                                                <input class="form-control" type="text" name="inn" th:id="inn" >
+                                                            </div>
+                                                        </div>
+
+
+                                                        <!--                                                                    <div class="form-group">-->
+                                                        <!--                                                                        <label th:for="email">Email</label>-->
+                                                        <!--                                                                        <div>-->
+                                                        <!--                                                                            <input class="form-control" type="text" name="email" th:id="email" th:value="${user.email}">-->
+                                                        <!--                                                                        </div>-->
+                                                        <!--                                                                    </div>-->
+                                                        <!--                                                                    <div class="form-group">-->
+
+                                                        <!--                                                                        <label th:for="roles">Roles </label>-->
+                                                        <!--                                                                        <div>-->
+                                                        <!--                                                                            <select multiple name="roles" size="3" readonly class="form-control" >-->
+                                                        <!--                                                                                <option  th:each="role : ${roles}" th:value="${role}" th:text="${role.role}"></option>-->
+                                                        <!--                                                                            </select>-->
+                                                        <!--                                                                        </div>-->
+                                                        <!--                                                                    </div>-->
+                                                    </div>
+
+
+
+                                                    <!-- Футер модального окна -->
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                                                        <button type="submit" class="btn btn-danger">Добавить</button>
+                                                    </div>
+                                                </form>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" data-target="#addStore" class="btn btn-danger" data-toggle="modal" disabled >Добавить склад</button>
+                                <div id="addStore"  class="modal fade" tabindex="-1" role="dialog"
+                                     style="font-weight: bold"
+                                >
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <!-- Заголовок модального окна -->
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Delete user</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >×</button>
+                                            </div>
+                                            <!-- Основное содержимое модального окна -->
+                                            <div class="modal-body text-center">
+
+                                                <form th:action="@{/delete}" method="post" th:object="${user}">
+                                                    <!--                                        <input type="submit" name="id" th:value="${user.id}">-->
+                                                    <div class="form-row justify-content-center mx-auto col-6">
+
+
+                                                        <div class="form-group">
+
+                                                            <label th:for="id">Id</label>
+                                                            <div>
+                                                                <input class="form-control" type="text" name="id" th:id="id" >
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+
+                                                            <label th:for="name">First Name</label>
+                                                            <div>
+                                                                <input class="form-control" type="text" name="name" th:id="name" >
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+
+                                                            <label th:for="date">Last Name</label>
+                                                            <div>
+                                                                <input class="form-control" type="text" name="date" th:id="date" >
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label  th:for="alias">Age</label>
+                                                            <div>
+                                                                <input class="form-control" type="text" name="alias" th:id="alias" >
+                                                            </div>
+                                                        </div>
+
+                                                        <!--                                                                    <div class="form-group">-->
+                                                        <!--                                                                        <label th:for="email">Email</label>-->
+                                                        <!--                                                                        <div>-->
+                                                        <!--                                                                            <input class="form-control" type="text" name="email" th:id="email" th:value="${user.email}">-->
+                                                        <!--                                                                        </div>-->
+                                                        <!--                                                                    </div>-->
+                                                        <!--                                                                    <div class="form-group">-->
+
+                                                        <!--                                                                        <label th:for="roles">Roles </label>-->
+                                                        <!--                                                                        <div>-->
+                                                        <!--                                                                            <select multiple name="roles" size="3" readonly class="form-control" >-->
+                                                        <!--                                                                                <option  th:each="role : ${roles}" th:value="${role}" th:text="${role.role}"></option>-->
+                                                        <!--                                                                            </select>-->
+                                                        <!--                                                                        </div>-->
+                                                        <!--                                                                    </div>-->
+                                                    </div>
+
+
+
+                                                    <!-- Футер модального окна -->
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                    </div>
+                                                </form>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" data-target="#addScan" class="btn btn-danger" data-toggle="modal" >Добавить скан</button>
+                                <div id="addScan"  class="modal fade" tabindex="-1" role="dialog"
+                                     style="font-weight: bold"
+                                >
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <!-- Заголовок модального окна -->
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Добавление скана договора</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >×</button>
+                                            </div>
+                                            <!-- Основное содержимое модального окна -->
+                                            <div class="modal-body text-center">
+
+                                                    <!--                                        <input type="submit" name="id" th:value="${user.id}">-->
+                                                    <div class="d-flex flex-row">
+                                                        <form th:action="@{/crd/image}" name="imageform" id="imageform" method="post" enctype="multipart/form-data">
+                                                            <div class="p-2">
+                                                                <input type="file" name="image" id="image">
+                                                                <input type="submit">
+                                                            </div>
+                                                        </form>
+
+                                                        <div class="p-2" >
+                                                            <form th:action="@{/pdfmerge}" name="multyimageform" id="multyimageform" method="get" >
+                                                                <!--                                    <input type="file" name="files[]" id="files[]" multiple >-->
+                                                                <input type="submit" value="собрать">
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                    <!-- Футер модального окна -->
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+<!--                                                        <button type="submit" class="btn btn-danger">Delete</button>-->
+                                                    </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                                <br>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
